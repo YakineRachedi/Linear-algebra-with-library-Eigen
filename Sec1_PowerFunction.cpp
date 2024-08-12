@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include <chrono>
 #include <fstream>
 
@@ -18,6 +19,8 @@ If the size is not fixed at the time of writing the program but at its execution
 */
 // To simplify the code, we can save this type in the form
 using MatrixDouble = Eigen::Matrix <double, Eigen::Dynamic, Eigen::Dynamic>;
+using SparseMatrix = Eigen::SparseMatrix<double>;
+
 
 /*
     This recursive function allows calculating the power of a matrix.
@@ -80,6 +83,34 @@ MatrixDouble fast_power(const MatrixDouble & M, int n){
         N = fast_power(M, n / 2); // Same as (n-1) / 2 : This is Euclidean (integer) division, so if n = 2k + 1, then n / 2 equals to k
         // It gives the same result directly, so even if I use (n-1) / 2, it is also correct.
         return M * N * N;
+    }
+}
+
+
+/* 
+    Since the matrix in the file is sparse (contains many zeros), 
+        an efficient way to fill a sparse matrix is to use this code to avoid the zeros and reduce computation time.
+    ----------------------------------------------------------------------------------------------------------------------------
+*/
+
+SparseMatrix sparse_power(const SparseMatrix & M, int n){
+	if(n==0){
+		SparseMatrix Id(M.rows(),M.cols());
+		Id.setIdentity();	//cf. https://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html
+		return Id;
+	}
+	else if(n == 1){
+		return M;
+	}
+	else if(n % 2 == 0){
+		SparseMatrix N (M.rows(), M.cols());
+		N = sparse_power(M, n / 2);
+		return N*N;
+	}
+	else { //casse n % 2 == 1 (odd number)
+		SparseMatrix N(M.rows(), M.cols());
+		N = sparse_power(M, n / 2);
+		return M * N*  N;
     }
 }
 
@@ -159,5 +190,27 @@ int main(){
     double time_fast_power = measure_time(fast_power,B,1000);
     cout << "Time taken to compute B^1000 using the second method = " << time_fast_power << " s \n";
     
+    cout << "\n**************************************\n";
+    /*************************************************************************************************************************************/
+    
+    SparseMatrix C(size_of_matrix,size_of_matrix);
+    ifstream input_2("matrice.txt");
+    for (int i = 0; i < size_of_matrix ; i++){
+       for (int j = 0; j < size_of_matrix ; j++){
+        double v;
+        input_2 >> v;
+        if (std::abs(v)> 1e-12)
+            C.coeffRef(i,j) = v;
+        }
+    }
+    input_2.close();
+    
+    auto start = timer::now();
+    SparseMatrix Power_C = sparse_power(C,1000);
+    auto end = timer::now();
+    chrono::duration<double> time_sparse_power = end - start;
+    cout << "Time taken to compute B^1000 in sparse format = " << time_sparse_power.count() << " s" << std::endl; 
+
+    /*===================================================================================================================================*/   
     return 0;
 }
