@@ -57,6 +57,32 @@ MatrixDouble slow_power_without_ampersand(MatrixDouble M, int n){
     The ampersand '&' is used to pass the argument by reference. Without the ampersand, 
         all the coefficients of the matrix and its powers from 1 to n are copied. In the case of A^100, this would result in 900 copies.
 */
+
+MatrixDouble fast_power(const MatrixDouble & M, int n){
+    if(n == 0){
+        return MatrixDouble::Identity(M.rows(),M.cols());
+    }
+    else if (n == 1) {
+        return M;
+    }
+    else if(n % 2 == 0){  // Case when n is an even number (n = 2k, k integer)
+        MatrixDouble N(M.rows(),M.cols());
+        N = fast_power(M, n / 2);
+        /*
+        * Be careful here :
+        *   return puissance_rapide(M, n/2) * puissance_rapide(M, n/2);
+        * the program calculates the half power twice, and there is no time gain.
+        */
+        return N * N;
+    }
+    else{ // Case where n is an odd number (n = 2k + 1, k integer)
+        MatrixDouble N(M.rows(),M.cols());
+        N = fast_power(M, n / 2); // Same as (n-1) / 2 : This is Euclidean (integer) division, so if n = 2k + 1, then n / 2 equals to k
+        // It gives the same result directly, so even if I use (n-1) / 2, it is also correct.
+        return M * N * N;
+    }
+}
+
 int main(){
     MatrixDouble A(3,3);
     A << 0.4, 0.6, 0,
@@ -118,5 +144,20 @@ int main(){
     cout << "\n**************************************\n";
     /*************************************************************************************************************************************/
 
+    const int size_of_matrix = 30;
+    MatrixDouble B(size_of_matrix,size_of_matrix);
+    ifstream input_1("matrice.txt");
+    for(int i = 0; i < size_of_matrix; i++){
+        for(int j = 0; j < size_of_matrix; j++){
+            input_1 >> B(i,j);
+        }
+    }
+    input_1.close();
+
+    double time_slow_power = measure_time(slow_power,B,1000);
+    cout << "Time taken to compute B^1000 using the first method = " << time_slow_power << " s \n";
+    double time_fast_power = measure_time(fast_power,B,1000);
+    cout << "Time taken to compute B^1000 using the second method = " << time_fast_power << " s \n";
+    
     return 0;
 }

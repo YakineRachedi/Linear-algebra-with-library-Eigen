@@ -9,8 +9,12 @@ In this section, I write a recursive function (`slow_power`) that computes the p
 In this function code, I use dense (full) matrices.
 
 ### Optimization Perspectives
+The matrix 𝐴 is small in size, so it is quick to compute its powers. However, to compute the n-th power of a matrix of size $N . N$,
+𝑛 calls to matrix multiplication of $N . N$ are needed, which correspond to $N^2$ operations each, resulting in $n . N^2$ calculations. 
+The underlying algorithm for the function has a complexity of $O(n . N^2)$ 
 
-I write another function based on a different reasoning:
+We can improve the algorithm by using the (`fast_power`) function, which takes the same input and output types as slow_power but operates on a different recurrence principle. 
+
 - If $n = 0$, then $M^n = I_d$.
 - Otherwise, if $n$ is even, then $M^n = (M^{n/2}) \cdot (M^{n/2})$.
 - If $n$ is odd, then $M^n = M \cdot (M^{(n-1)/2}) \cdot (M^{(n-1)/2})$.
