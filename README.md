@@ -43,6 +43,9 @@ The `sparse_power` function computes the $n$-th power of a sparse matrix. I calc
 
 This comparison helps evaluate the performance improvements achieved by using sparse matrices for large exponentiation tasks.
 
+# Section 2 : Template function
+In this file i create a template function that merge the `fast_power` and `sparse_power` functions into a single template function puissance_rapide<MatrixType> compatible with both of their respective types.
+
 # Section 3 : Random matrices and their spectrum
 
 In random matrix theory, the Gaussian Orthogonal Ensemble (GOE) is the set of symmetric matrices $A \in M_N(\mathbb{R})$ whose diagonal and above-diagonal entries are independent, such that $a_{ii} \sim \mathcal{N}(0, 1)$ and $a_{ij} \sim \mathcal{N}(0, 2)$ for all $1 \leq i < j \leq N$. As real symmetric matrices, they are diagonalizable with real eigenvalues. It can be shown that almost surely (with respect to the Lebesgue measure on the matrices) these eigenvalues $(\lambda_1, \ldots, \lambda_N)$ are all distinct. 
