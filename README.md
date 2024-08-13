@@ -42,3 +42,42 @@ C2 = A + B;
 The `sparse_power` function computes the $n$-th power of a sparse matrix. I calculate the 1000th power and then compare the computation time to the previous ones. 
 
 This comparison helps evaluate the performance improvements achieved by using sparse matrices for large exponentiation tasks.
+
+# Section 3 : Random matrices and their spectrum
+
+In random matrix theory, the Gaussian Orthogonal Ensemble (GOE) is the set of symmetric matrices $A \in M_N(\mathbb{R})$ whose diagonal and above-diagonal entries are independent, such that $a_{ii} \sim \mathcal{N}(0, 1)$ and $a_{ij} \sim \mathcal{N}(0, 2)$ for all $1 \leq i < j \leq N$. As real symmetric matrices, they are diagonalizable with real eigenvalues. It can be shown that almost surely (with respect to the Lebesgue measure on the matrices) these eigenvalues $(\lambda_1, \ldots, \lambda_N)$ are all distinct. 
+
+We can then define the empirical spectral measure of the eigenvalues as:
+
+$$
+\mu_N = \frac{1}{N} \sum_{i=1}^{N} \delta_{\frac{\lambda_i}{\sqrt{N}}}
+$$
+
+A classical result is that this measure converges narrowly, as $N$ tends to infinity, to the semicircle measure:
+
+$$
+d\sigma(x) = \frac{1}{\pi} \sqrt{4 - x^2} \, 1_{[-2,2]}(x) \, dx
+$$
+
+where the density is a semicircle centered at 0 with radius 2. In particular, the limiting measure is compactly supported. The aim of the following questions is to illustrate this phenomenon.
+
+This section aims to accomplish the following tasks:
+1. Generate large independent random matrices of size $N$.
+2. Compute their spectra.
+3. Create a histogram of their eigenvalues, i.e., divide the interval $[a, b]$ into $K$ segments of equal length and count how many eigenvalues fall into each segment.
+
+The `<Eigen/Eigenvalues>` sub-library allows for the calculation of eigenvalues of a matrix. Given a matrix `MatrixDouble M(N, N)`, you declare the eigenvalue computation algorithm as follows:
+
+```cpp
+Eigen::EigenSolver<MatrixDouble> Solver(M, b);
+// If b is true, the eigenvectors are also computed.
+// If b is false, only the eigenvalues are computed.
+```
+### Histogram part :
+Consider an interval $[a, b[$ which is divided into $K$ successive segments of equal size $B_k = [a + k\delta, a + (k + 1)\delta[$ with $0 \leq k < K$ and $\delta = \frac{b - a}{K}$: these will constitute the "bins" of the histogram.
+
+Next, consider a sequence of real values $(\lambda_n)_{0 \leq n < N}$. Creating the histogram of these values involves calculating the numbers $(h_k)_{0 \leq k < K}$ such that, for each $k$, $h_k$ is an integer indicating the number of values $\lambda_n$ that fall into the bin $B_k$. You can then optionally normalize $h_k$ by $N$ to obtain the fraction of $\lambda_n$ values that fall into the bin $B_k$.
+
+To do this, you simply need to iterate through all values $(\lambda_n)_{0 \leq n < N}$, determine which $B_k$ each $\lambda_n$ belongs to, and increment the corresponding $h_k$ value.
+
+* _Note_ : I'm going to include the eigenvalues.dat file because running this code takes a lot of time.
