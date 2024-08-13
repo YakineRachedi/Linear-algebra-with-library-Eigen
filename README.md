@@ -80,4 +80,12 @@ Next, consider a sequence of real values $(\lambda_n)_{0 \leq n < N}$. Creating 
 
 To do this, you simply need to iterate through all values $(\lambda_n)_{0 \leq n < N}$, determine which $B_k$ each $\lambda_n$ belongs to, and increment the corresponding $h_k$ value.
 
-* _Note_ : I'm going to include the eigenvalues.dat file because running this code takes a lot of time.
+# Section 4 : Histogram class (The right approach : breaking it down into basic tasks)
+
+For the fourth section, to write readable code and break down complexity into elementary tasks, I believe it is better to create a class that will help organize everything. 
+
+In this section, I do the same as in the previous section, but using a `Histogram` class and a separate function to generate the spectrum of a GOE matrix of size $N$. At the end, I test the performance of this code and compare it with the other code.
+
+I also made a Python script that uses the `matplotlib.pyplot` library to visualize this histogram (we could also use Gnuplot, but I don't have it on my machine).
+
+* Note : Since the code takes a bit of time to run, I have included the result files as well.
